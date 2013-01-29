@@ -1,0 +1,67 @@
+			       销售系统
+* main
+** login()
+
+* login()
+** show_login_win() //显示登录界面
+** get_user_name()  //获取用户名
+** get_pass_word()  //获取密码
+** valid()          //校验密码
+** sys_main()
+
+* sys_main()
+** show_main_window()
+*** print main stuff     //显示主界面的东西
+*** show sale number     //显示销售单号
+*** show cashier name    //显示销售员名字
+*** show_list();         //显示销售单里的货物
+*** show_page_number();  //显示当前页码
+*** show_error_tips();   //显示错误
+** get_key()
+** doit()
+
+* doit()
+** on_key_left()
+*** page up
+** on_key_right()
+*** page down
+** on_key_up()
+*** item up
+** on_key_down()
+*** item down
+** on_key_f8()
+*** store_fetch_item(); //从仓储系统中获得货物
+*** line_item_new();    //创建一个新的行元素
+*** enter_line_item();  //添加行元素到销售单中
+
+* 结构体
+
+	┌-------------┬-----------┬------┐
+	| line_item_t | memeber   | 含义 |
+	|-------------+-----------+------|
+	|             | code      | 条码 |
+	|             | name      | 名字 |
+	|             | price     | 价格 |
+	|             | discount  | 折扣 |
+	|             | count     | 数量 |
+	|             | total     | 总额 |
+	└-------------+-----------+------┘
+
+	┌-------------┬-----------┬----------┐
+	| sale_t      | member    | 含义     |
+	|-------------+-----------+----------|
+	|             | sale_num  | 销售单号 |
+	|             | item_list | 元素列表 |
+	└-------------+-----------+----------┘
+
+	┌-------------┬-----------┬------┐
+	| good_t      | member    | 含义 |
+	|-------------+-----------+------|
+	|             | name      | 名字 |
+	|             | code      | 条码 |
+	|             | price     | 价格 |
+	└-------------+-----------+------┘
+
+
+
+
