@@ -71,7 +71,7 @@ void doit(KEY_T key)
 		break;
 
 		case '1':
-			on_key_f1();
+			//on_key_f1();
 		break;
 				
 		case '2'://KEY_F2:
