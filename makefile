@@ -5,7 +5,7 @@ LDFLAGS = -g
 
 main : login.o utils.o main.o sys_main.o \
 	line_item.o list.o sale.o ctrl.o getsale.o \
-	store.o
+	store.o searchsale.o
 
 clean :
 	rm *.o *~ -rf

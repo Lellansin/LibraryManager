@@ -51,7 +51,12 @@ double make_payment(double total, double pay)
 	 * update_outcome(total-pay);
 	 * update_income(pay);
 	 */
-	return pay - total;
+	if (pay >= total)
+	{
+		return pay - total;
+	}else{
+		return -1;
+	}
 }
 
 /*

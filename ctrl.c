@@ -4,6 +4,7 @@
 #include "store.h"
 
 #include "getsale.h"
+#include "searchsale.h"
 
 
 #include <time.h>
@@ -18,6 +19,9 @@ extern const int ITEM_PER_PAGE;
 extern int item_selected;
 extern char err_str[];
 
+int globl_sale_num;
+extern sale_t *tmp_sale;
+
 extern int sale_num;
 extern sale_t *pend_sales[];
 extern int npends;
@@ -31,10 +35,13 @@ static void on_key_f2();
 static void on_key_f3();
 static void on_key_f4();
 
+static void on_key_f1();
+
 static void on_key_f6();
 static void on_key_f7();
+static void on_key_f9();
 
-static void check_out();
+static int check_out();
 static void save_data();
 static void save_sale();
 static void save_some_sale(FILE *file, sale_t *sale);
@@ -62,11 +69,11 @@ void doit(KEY_T key)
 		case KEY_DOWN:
 			on_key_down();
 		break;
-		
-		case KEY_F8:
-			on_key_f8();
+
+		case '1':
+			on_key_f1();
 		break;
-		
+				
 		case '2'://KEY_F2:
 			on_key_f2();
 		break;
@@ -85,6 +92,14 @@ void doit(KEY_T key)
 
 		case '7':
 			on_key_f7();
+			break;
+
+		case KEY_F8:
+			on_key_f8();
+		break;
+
+		case '9':
+			on_key_f9();
 			break;
 
 		case KEY_TAB:
@@ -186,10 +201,10 @@ static void on_key_f8()
 		enter_line_item(cur_sale, line_item);
 	} else if (-1 == err) {
 		/* 不存在该货物 */
-		strncpy(err_str, "nonexist goods", ERR_LEN);
+		strncpy(err_str, "货物不存在", ERR_LEN);
 	} else if (-2 == err) {
 		/* 商品数量不足 */
-		strncpy(err_str, "not enough goods", ERR_LEN);
+		strncpy(err_str, "商品数量不足", ERR_LEN);
 	}
 }
 
@@ -231,7 +246,6 @@ static void on_key_f2()
 	printf("└─────────────────┘");
 
 
-
 	move_to(47, 10);
 	//printf("输入删除的数量");
 	printf("条码: %s", item->code);
@@ -257,11 +271,23 @@ static void on_key_f2()
 
 static void on_key_f3()
 {
-	check_out();
-	save_data();
+	int flag;
+	flag = check_out();
+
+	if ( flag )
+	{
+		save_data();
+	}else{
+		// move_to(46, 8);
+		// printf("  金额不足！");
+		// move_to(46, 9);
+		// printf("按任意键继续");
+		strncpy(err_str, "  金额不足！", ERR_LEN);
+		getchar();
+	}
 }
 
-static void check_out()
+static int check_out()
 {
 	double total, payment, change;
 
@@ -277,16 +303,22 @@ static void check_out()
 	/* 支付 */
 	change = make_payment(total, payment);
 
-	/* 显示应找金额 */
-	show_change(change);
+	if (-1 != change)
+	{		
+		/* 显示应找金额 */
+		show_change(change);
+		return 1;
+	}else{
+		return 0;
+	}
+
 }
 
 static void save_data()
 {
 	/* 保存销售单 */
 	save_sale();
-	/* 删除销售单 */
-	/* 新建销售单 */
+	on_key_f4();
 }
 
 /*
@@ -393,17 +425,35 @@ static void save_some_sale(FILE *file, sale_t *sale)
 	}
 }
 
-
 /*
  * 撤单
  * 
  * 把链表中的内容清空，把销售界面清空，等待下一次销售
  */
 static void on_key_f4()
-{
+{	
+	/* 删除销售单 */	
+
 	delete_sale(cur_sale);
-	cur_sale->sale_num++;
-	list_init(&cur_sale->item_list);
+
+	// 总单计数
+	if (globl_sale_num <= cur_sale->sale_num)
+	{
+		globl_sale_num = cur_sale->sale_num++;
+	}else{
+		cur_sale->sale_num = globl_sale_num;
+	}	
+
+	/* 新建销售单 */
+
+	// 若临时清单不为空则调用临时清单，否则新建清单
+	if (tmp_sale == NULL)
+	{
+		list_init(&cur_sale->item_list);
+	}else{
+		cur_sale = tmp_sale;
+		tmp_sale = NULL;
+	}
 }
 
 /*
@@ -420,20 +470,74 @@ static void on_key_f6()
 		printf("  按任意键继续");
 		getchar();
 		return ;
+	}else if ( npends >= 5)
+	{
+		move_to(46, 8);
+		printf("清单已满不能悬挂");
+		move_to(46, 9);
+		printf("  按任意键继续");
+		getchar();
+		return ;
 	}
 
+
+	// 加入挂单列表
 	pend_sales[npends++] = cur_sale;
-	// printf("sale_num:%d\n", sale_num);
-	// getchar();
-	cur_sale = make_new_sale( ++(cur_sale->sale_num) );
+
+	// 总单计数
+	if (globl_sale_num <= cur_sale->sale_num)
+	{
+		globl_sale_num = cur_sale->sale_num+1;
+	}
 	sale_num++;
 
-	printf("%d\n", npends);
-	getchar();
+	// 若临时清单不为空则调用临时清单，否则新建清单
+	if (tmp_sale == NULL)
+	{
+		cur_sale = make_new_sale( globl_sale_num );
+	}else{
+		cur_sale = tmp_sale;
+		tmp_sale = NULL;
+	}
 }
 
 static void on_key_f7()
 {
-	get_sale();
+	int flag;
+	// 如果当前清单不为空则保存至临时清单
+	if (list_len(&cur_sale->item_list) != 0)
+	{
+		tmp_sale = cur_sale;
+	}
+	// else{
+	// 	// 否则free当前空单
+	// 	list_free(&cur_sale->item_list);
+	// 	free(cur_sale);
+	// }
+
+	// 获取挂单
+	flag = get_sale();
+
+	if (flag)
+	{
+		if (tmp_sale == NULL)
+		{
+			cur_sale = make_new_sale( globl_sale_num );
+		}else{
+			cur_sale = tmp_sale;
+			tmp_sale = NULL;
+		}
+	}
+}
+
+
+static void on_key_f9()
+{
+	login();
+}
+
+static void on_key_f1()
+{
+	search_sale();
 }
 

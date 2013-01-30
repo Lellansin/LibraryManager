@@ -20,6 +20,16 @@ void print_err(int status);
 static void init_clock();
 static void update_clock();
 
+struct User
+{
+	char name[UNAME_LEN];
+	char password[PWORD_LEN];
+} UserList[10] ;
+
+int UserCount;
+
+static void init_user();
+
 /*
  * 2.输入获取
  * 3.处理输入
@@ -28,11 +38,13 @@ void login()
 {
 	int Login_status;
 	init_clock();	
+	init_user();
 
 	while (1) {
 
 		/* 显示界面 */
 		show_login_window();
+
 		/* 获取用户名 */
 		get_user_name();
 		/* 获取密码 */
@@ -52,6 +64,7 @@ void login()
 
 		/* 错误提示 */
 		print_err(Login_status);
+		
 	}
 }
 
@@ -63,10 +76,10 @@ void show_login_window()
 	clear_win();
 	move_to(0, 0);
 
-	printf("┌───────────────────────────────────┐\n");
-	printf("│           图书销售系统            │\n");
-	printf("│           ────────────            │\n");
-	printf("│                                   │\n");
+	printf("┌────────────────────────────────────┐\n");
+	printf("│           图书销售系统             │\n");
+	printf("│           ────────────             │\n");
+	printf("│                                    │\n");
 
 	printf("│       ");
 
@@ -74,34 +87,34 @@ void show_login_window()
 	printf("┌───────────────────┐ ");
 	color_off();
 
-	printf("      │\n");
+	printf("       │\n");
 	printf("│       ");
 	
 	color_on(INVERSE, BLACK, WHITE);
 	printf("│ 用户名：          │ ");
 	color_off();
 
-	printf("      │\n");
+	printf("       │\n");
 	printf("│       ");
 	
 	color_on(INVERSE, BLACK, WHITE);
 	printf("│ 密  码：          │ ");
 	color_off();
 
-	printf("      │\n");
+	printf("       │\n");
 	printf("│       ");
 	
 	color_on(INVERSE, BLACK, WHITE);
 	printf("└───────────────────┘ ");
 	color_off();
 
-	printf("      │\n");
-	printf("│                                   │\n");
-	printf("│                                   │\n");
-	printf("│                                   │\n");
-	printf("│                                   │\n");
-	printf("│  时间:               按TAB键退出  │\n");
-	printf("└───────────────────────────────────┘\n");
+	printf("       │\n");
+	printf("│                                    │\n");
+	printf("│                                    │\n");
+	printf("│                                    │\n");
+	printf("│                                    │\n");
+	printf("│  时间:               按TAB键退出   │\n");
+	printf("└────────────────────────────────────┘\n");
 }
 
 /*
@@ -124,8 +137,21 @@ void get_pass_word()
 
 int check_login()
 {
+	int flag = 0;
+	int i;
 
-	if (0 == strcmp(username, "admin") && 0 == strcmp(password, "admin"))
+	for (i = 0; i < UserCount; i++)
+	{
+		if(0 == strcmp(username, UserList[i].name))
+		{
+			if (0 == strcmp(password, UserList[i].password))
+			{
+				flag = 1;
+			}
+		}
+	}
+
+	if (flag)
 	{
 		return LOGIN_INFO_SUCCESS;
 	}else{
@@ -198,3 +224,16 @@ static void update_clock()
 
 	alarm(1);
 }
+
+static void init_user()
+{
+	strcpy(UserList[0].name, "admin");
+	strcpy(UserList[0].password, "admin");
+	UserCount++;
+
+	strcpy(UserList[1].name, "alan");
+	strcpy(UserList[1].password, "1234");
+	UserCount++;
+}
+
+

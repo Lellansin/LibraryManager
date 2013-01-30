@@ -12,6 +12,9 @@ extern sale_t *pend_sales[];
 extern sale_t *cur_sale;
 
 BOOL is_end = FALSE;
+
+int isExit;
+
 int get_sale_item_selected;
 
 static void get_sale_init();
@@ -23,7 +26,7 @@ static void get_sale_up();
 static void get_sale_down();
 static void get_sale_get();
 
-void get_sale()
+int get_sale()
 {
 	KEY_T key;
 	
@@ -34,6 +37,8 @@ void get_sale()
 		key = getkey();
 		get_sale_doit(key);
 	}
+
+	return isExit;
 }
 
 void show_get_sale_win()
@@ -41,27 +46,27 @@ void show_get_sale_win()
 	clear_win();
 	move_to(0, 0);
 
-	printf("┌───────────┬─────────────────────────────────────────┐\n");
-	printf("│           │ 明细 ：                                 │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("│           │                                         │\n");
-	printf("└─────────────────────────────────────────────────────┘\n");
+	printf("┌─────────────┬────────────────────────────────────────────┐\n");
+	printf("│     单号    │   序号 条码 商品名称 单价 折扣 数量 金额   │\n");
+	printf("├─────────────┼────────────────────────────────────────────┤\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("│             │                                            │\n");
+	printf("├─────────────┴────────────────────────────────────────────┤\n");
+	printf("│  上下选择  回车选中  TAB退出             时间:           │\n");
+	printf("└──────────────────────────────────────────────────────────┘\n");
 	
 	/* 显示挂单表 */
 	get_sale_show_list();
@@ -82,15 +87,19 @@ static void get_sale_init()
 void get_sale_doit(KEY_T key)
 {
 	switch (key) {
-	case KEY_UP:
-		get_sale_up();
-		break;
-	case KEY_DOWN:
-		get_sale_down();
-		break;
-	case KEY_ENTER:
-		get_sale_get();
-		break;
+		case KEY_UP:
+			get_sale_up();
+			break;
+		case KEY_DOWN:
+			get_sale_down();
+			break;
+		case KEY_ENTER:
+			get_sale_get();
+			break;
+		case KEY_TAB:
+			isExit = 1;
+			is_end = 1;
+			break;
 	}
 }
 
@@ -98,7 +107,7 @@ void get_sale_show_list()
 {
 	int i;
 	for (i = 0; i < npends; i++) {
-		move_to(4, 4+i);
+		move_to(5, 4+i);
 
 		if (get_sale_item_selected == i)
 		{
@@ -129,8 +138,9 @@ void get_sale_show_detail()
 	list = &sale->item_list;
 	for (i = 0; i < ITEM_SHOWS && i < list_len(list); i++) {
 		list_get(list, i, &item);
-		move_to(19, 4+i);
-		printf(" %d  %s  %s  %.2lf  %.2lf %d %.2lf",
+		move_to(18, 4+i);
+
+		printf("%3d%6s   %-6s%6.2lf%5.1lf%4d%6.2lf",
 			i,
 			item->code,
 			item->name,
@@ -138,6 +148,15 @@ void get_sale_show_detail()
 			item->discount,
 			item->count,
 			item->total);
+
+		// printf(" %d  %s  %s  %.2lf  %.2lf %d %.2lf",
+		// 	i,
+		// 	item->code,
+		// 	item->name,
+		// 	item->price,
+		// 	item->discount,
+		// 	item->count,
+		// 	item->total);
 	}
 	
 }
@@ -167,16 +186,15 @@ static void get_sale_get()
 	if (npends <= 0) {
 		is_end = TRUE;
 		return ;
-	}		
+	}
 	
-	for (i = get_sale_item_selected;
-		i < npends-1; i++) {
+	for (i = get_sale_item_selected; i < npends-1; i++) {
 		pend_sales[i] = pend_sales[i+1];	
 	}
 	npends--;
 	
-	list_free(&cur_sale->item_list);
-	free(cur_sale);
+	// list_free(&cur_sale->item_list);
+	// free(cur_sale);
 	cur_sale = toget;
 	
 	is_end = TRUE;

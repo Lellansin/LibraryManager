@@ -18,6 +18,8 @@ int cur_page;
 sale_t *cur_sale;
 char err_str[ERR_LEN];
 
+sale_t *tmp_sale;
+
 int sale_num;
 sale_t *pend_sales[MAX_PEND];
 int npends;
@@ -202,7 +204,7 @@ void show_time()
 		cur_time->tm_hour,
 		cur_time->tm_min,
 		cur_time->tm_sec);
-	move_to(46, 20);
+	move_to(50, 20);
 	printf("%s", time_str);
 	fflush(stdout);
 

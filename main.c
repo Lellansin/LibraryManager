@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-// test too
 
 int main()
 {
