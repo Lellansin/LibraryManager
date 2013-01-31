@@ -15,21 +15,21 @@ void Goods_init()
 {
 	StoreGoods.Count = 0;
 
-	strncpy(StoreGoods.Goods[0].name, "Alan", NAME_LEN);
+	strncpy(StoreGoods.Goods[0].name, "linux", NAME_LEN);
 	strncpy(StoreGoods.Goods[0].code, "1", CODE_LEN);
-	StoreGoods.Goods[0].price = 0.54;
+	StoreGoods.Goods[0].price = 65;
 
 	StoreGoods.Count++;
 
-	strncpy(StoreGoods.Goods[1].name, "Bob", NAME_LEN);
+	strncpy(StoreGoods.Goods[1].name, "Java", NAME_LEN);
 	strncpy(StoreGoods.Goods[1].code, "2", CODE_LEN);
-	StoreGoods.Goods[1].price = 1.20;
+	StoreGoods.Goods[1].price = 32.5;
 
 	StoreGoods.Count++;
 
-	strncpy(StoreGoods.Goods[2].name, "Cici", NAME_LEN);
+	strncpy(StoreGoods.Goods[2].name, "Python", NAME_LEN);
 	strncpy(StoreGoods.Goods[2].code, "3", CODE_LEN);
-	StoreGoods.Goods[2].price = 1.20;
+	StoreGoods.Goods[2].price = 15;
 
 	StoreGoods.Count++;
 }

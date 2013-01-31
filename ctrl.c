@@ -74,7 +74,7 @@ void doit(KEY_T key)
 			//on_key_f1();
 		break;
 				
-		case '2'://KEY_F2:
+		case '2':
 			on_key_f2();
 		break;
 		
@@ -92,7 +92,7 @@ void doit(KEY_T key)
 
 		case '7':
 			on_key_f7();
-			break;
+		break;
 
 		case KEY_F8:
 			on_key_f8();
@@ -100,7 +100,7 @@ void doit(KEY_T key)
 
 		case '9':
 			on_key_f9();
-			break;
+		break;
 
 		case KEY_TAB:
 			printf("退出操作");
@@ -167,46 +167,13 @@ static void get_counts(int *counts)
 }
 
 /*
- * linus talk is cheap show me the code;
+ * 注销登录
  */
-static void on_key_f8()
+static void on_key_f1()
 {
-	good_t good;
-
-	int counts = 3, err;
-	char code[CODE_LEN] = {0, };
-
-	line_item_t *line_item;
-	
-	cursor_show();
-	get_code(code);
-	get_counts(&counts);
-	cursor_hide();
-
-	err = store_fetch_item(code, counts, &good);
-
-	if (0 == err) {
-		/* 把货物结构题，填充到一个line_item里，
-		 * 调用enter_line_item添加
-		 */
-		line_item = line_item_new(
-			0,
-			good.code,
-			good.name,
-			good.price,
-			0.9,
-			counts
-			);
-		
-		enter_line_item(cur_sale, line_item);
-	} else if (-1 == err) {
-		/* 不存在该货物 */
-		strncpy(err_str, "货物不存在", ERR_LEN);
-	} else if (-2 == err) {
-		/* 商品数量不足 */
-		strncpy(err_str, "商品数量不足", ERR_LEN);
-	}
+	search_sale();
 }
+
 
 /*
  * 删除商品
@@ -318,6 +285,7 @@ static void save_data()
 {
 	/* 保存销售单 */
 	save_sale();
+	/* 撤单 */
 	on_key_f4();
 }
 
@@ -393,7 +361,6 @@ static void save_sale()
 	/* 打开文件 */
 	file = fopen(filename, "w");
 	if (NULL == file) {
-		//err
 		return;
 	}
 
@@ -509,11 +476,6 @@ static void on_key_f7()
 	{
 		tmp_sale = cur_sale;
 	}
-	// else{
-	// 	// 否则free当前空单
-	// 	list_free(&cur_sale->item_list);
-	// 	free(cur_sale);
-	// }
 
 	// 获取挂单
 	flag = get_sale();
@@ -530,14 +492,48 @@ static void on_key_f7()
 	}
 }
 
+static void on_key_f8()
+{
+	good_t good;
+
+	int counts = 3, err;
+	char code[CODE_LEN] = {0, };
+
+	line_item_t *line_item;
+	
+	cursor_show();
+	get_code(code);
+	get_counts(&counts);
+	cursor_hide();
+
+	err = store_fetch_item(code, counts, &good);
+
+	if (0 == err) {
+		/* 把货物结构题，填充到一个line_item里，
+		 * 调用enter_line_item添加
+		 */
+		line_item = line_item_new(
+			0,
+			good.code,
+			good.name,
+			good.price,
+			0.9,
+			counts
+			);
+		
+		enter_line_item(cur_sale, line_item);
+	} else if (-1 == err) {
+		/* 不存在该货物 */
+		strncpy(err_str, "货物不存在", ERR_LEN);
+	} else if (-2 == err) {
+		/* 商品数量不足 */
+		strncpy(err_str, "商品数量不足", ERR_LEN);
+	}
+}
+
 
 static void on_key_f9()
 {
 	login();
-}
-
-static void on_key_f1()
-{
-	search_sale();
 }
 

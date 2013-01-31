@@ -54,8 +54,6 @@ void login()
 
 		/* 
 		 * 验证用户名密码
-		 * 正确进入系统，
-		 * 错误重新登录
 		 */
 		if ( Login_status == LOGIN_INFO_SUCCESS ) {
 			/* 进入系统 */

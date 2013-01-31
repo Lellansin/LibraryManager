@@ -44,7 +44,8 @@ void sys_main()
 	init_system();
 	Goods_init();
 
-	while (1) {
+	while (1) 
+	{
 		show_main_window();
 		key = getkey();
 		doit(key);
@@ -148,7 +149,7 @@ static void show_list()
 			color_on(INVERSE, BLACK, WHITE);
 		}
 
-		printf("%3d%6s   %-6s%6.2lf%5.1lf%4d%6.2lf",
+		printf("%3d%6s   %-6s%6.2lf%5.1lf%4d %6.2lf",
 			cnt,
 			item->code,
 			item->name,
@@ -204,6 +205,7 @@ void show_time()
 		cur_time->tm_hour,
 		cur_time->tm_min,
 		cur_time->tm_sec);
+
 	move_to(50, 20);
 	printf("%s", time_str);
 	fflush(stdout);
