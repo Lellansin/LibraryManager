@@ -98,7 +98,7 @@ static void show_main_window()
 	 * 显示销售单号
 	 */
 	move_to(14, 2);
-	printf("%d", cur_sale->sale_num);
+	printf("%05d", cur_sale->sale_num);
 
 	/*
 	 * 显示销售员
